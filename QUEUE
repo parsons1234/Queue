@@ -1,0 +1,112 @@
+// Queue.cpp : 此檔案包含 'main' 函式。程式會於該處開始執行及結束執行。
+//
+
+#include "pch.h"
+#include <iostream>
+using namespace std;
+
+class Queue {
+private:
+	int capacity, front, back;
+	int*queue;
+	void DoubleCapacity();
+public:
+	Queue() :capacity(5), front(0), back(0) {queue = new int[capacity];};
+	void Push(int x);
+	void Pop();
+	bool IsEmpty();
+	bool IsFull();
+	int getSize();
+	int getFront();
+	int getBack();
+	int getCapacity();
+};
+void Queue::DoubleCapacity() {
+
+	int *newQueue = new int[capacity*2];
+	int j = front,size=getSize();
+	for (int i =1; i <= size; i++) {
+		newQueue[i] = queue[++j % capacity];//j要先加1,因為front沒有東西
+	}
+	back = getSize();
+	front = 0;
+	capacity *= 2;
+	delete[]queue;
+	queue = newQueue;
+}
+void Queue::Push(int x) {
+	if (IsFull()) {
+		DoubleCapacity();
+	}
+	back = (back + 1) % capacity;
+	queue[back] = x;
+}
+void Queue::Pop() {
+	if (IsEmpty()) {
+		cout << "queue is empty" << endl;
+		return;
+	}
+	front = (front + 1) % capacity;
+}
+bool Queue::IsFull() {
+	return(back + 1 % capacity == front);
+}
+bool Queue::IsEmpty() {
+	return(back == front);
+}
+int Queue::getFront() {
+	if (IsEmpty()) {
+		cout << "Queue is empty" << endl;
+		return -1;
+	}
+	return queue[(front + 1)%capacity];
+
+}
+int Queue::getBack() {
+	if (IsEmpty())
+	{
+		cout << "Queue is empty" << endl;
+		return -1;
+	}
+	return queue[back];
+}
+int Queue::getCapacity() {
+	return capacity;
+}
+int Queue::getSize() {
+	int size;
+	if (front < back) {
+		size = back - front;
+	}
+	else {
+		size = capacity - (front - back);
+	}
+	return size;
+}
+void print(Queue queue)
+{
+	cout << "Front:" << queue.getFront() << " Back:" << queue.getBack() << "\n"
+	<< "capacity: " << queue.getCapacity() <<"              number of elements:"<<queue.getSize()<< "\n\n";
+}
+int main() {
+
+
+	Queue q;
+	if (q.IsEmpty()) {
+		cout << "Queue is empty" << "\n\n";
+	}
+	q.Push(24);
+	cout << "after push:24" << endl;
+	print(q);
+	q.Push(8);
+	q.Push(23);
+	cout << "after push:8,23" << endl;
+	print(q);
+	q.Pop();
+	cout << "after pop:24" << endl;
+	print(q);
+
+
+	system("pause");
+	return 0;
+}
